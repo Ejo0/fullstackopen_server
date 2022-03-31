@@ -14,10 +14,10 @@ const logger = morgan((tokens, req, res) => {
     ].join(' ')
 })
 
-app.use(cors())
 app.use(express.json())
-app.use(express.static('build'))
 app.use(logger)
+app.use(cors())
+app.use(express.static('build'))
 
 let persons = [
     {

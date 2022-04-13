@@ -34,7 +34,7 @@ app.get('/api/persons/:id', (req, res, next) => {
         }
         res.json(person)
     })
-    .catch(error => {next(error)})
+        .catch(error => {next(error)})
 })
 
 app.get('/info', (req, res) => {
@@ -50,7 +50,7 @@ app.get('/info', (req, res) => {
 
 app.delete('/api/persons/:id', (req, res, next) => {
     Person.findByIdAndRemove(req.params.id)
-        .then(result => {
+        .then(() => {
             res.status(204).end()
         })
         .catch(error => next(error))
@@ -59,29 +59,29 @@ app.delete('/api/persons/:id', (req, res, next) => {
 app.post('/api/persons', (req, res, next) => {
     const body = req.body
 
-    Person.find({name: body.name}).then(namesakes => {
+    Person.find({ name: body.name }).then(namesakes => {
         if (namesakes.length > 0) {
-            return res.status(400).json({error: 'name must be unique'})
+            return res.status(400).json({ error: 'name must be unique' })
         }
         const newPerson = new Person({
             name: body.name,
             number: body.number
         })
-    
+
         newPerson.save().then(savedPerson => {
             res.json(savedPerson)
         })
-        .catch(error => next(error))
+            .catch(error => next(error))
     })
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
-    const {name, number} = req.body
+    const { name, number } = req.body
 
     Person.findByIdAndUpdate(
         req.params.id,
-        {name, number},
-        {new: true, runValidators: true, context: 'query'}
+        { name, number },
+        { new: true, runValidators: true, context: 'query' }
     )
         .then(updatedPerson => {
             res.json(updatedPerson)
@@ -90,7 +90,7 @@ app.put('/api/persons/:id', (req, res, next) => {
 })
 
 const unknownEndpoint = (req, res) => {
-    res.status(404).send({error: 'unknown endpoint'})
+    res.status(404).send({ error: 'unknown endpoint' })
 }
 app.use(unknownEndpoint)
 
@@ -98,9 +98,9 @@ const errorHandler = (error, request, response, next) => {
     console.log(error.message)
 
     if (error.name === 'CastError') {
-        return response.status(400).send({ error: 'malformatted id'})
-    } else if (error.name == 'ValidationError') {
-        return response.status(400).json({error: error.message})
+        return response.status(400).send({ error: 'malformatted id' })
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message })
     }
 
     next(error)
@@ -108,6 +108,7 @@ const errorHandler = (error, request, response, next) => {
 
 app.use(errorHandler)
 
+// eslint-disable-next-line no-undef
 const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
